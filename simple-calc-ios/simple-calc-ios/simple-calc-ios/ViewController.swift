@@ -11,7 +11,6 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var displayPanel: UITextField!
     var input: String = ""
-    var operand: Int = 0
     var opSymbol: allOperators? = nil
     var operands:[Double] = []
     var noOpBefore: Bool = true
@@ -76,8 +75,9 @@ class ViewController: UIViewController {
                         }
                         input = "\(fact)"
                     }
-                    operands = []
                 }
+                operands = []
+                isDecimal = false;
             default: NSLog("unknown operator")
             }
             displayPanel.text = input
@@ -86,12 +86,19 @@ class ViewController: UIViewController {
                 var result: Double = 0
                 switch sender.currentTitle! {
                 case "+": result = operands[0] + operands[1]
+                    opSymbol = allOperators.add
                 case "-": result = operands[0] - operands[1]
+                    opSymbol = allOperators.sub
                 case "×": result = operands[0] * operands[1]
+                    opSymbol = allOperators.mul
                 case "÷": result = operands[0] / operands[1]
+                    opSymbol = allOperators.div
                 case "%": result = operands[0].truncatingRemainder(dividingBy: operands[1])
+                    opSymbol = allOperators.mod
                 case "Count": result = Double(operands.count)
+                    opSymbol = allOperators.count
                 case "Avg":
+                    opSymbol = allOperators.avg
                     var sum: Double = 0
                     for num in operands {
                         sum += num
