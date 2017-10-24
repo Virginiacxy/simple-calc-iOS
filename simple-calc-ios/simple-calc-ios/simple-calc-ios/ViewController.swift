@@ -125,8 +125,12 @@ class ViewController: UIViewController {
                     }
                 default: NSLog("unknown operator")
                 }
-                if sender.currentTitle! == "Fact" && result == 0 {
-                    displayPanel.text = input
+                if sender.currentTitle! == "Fact" {
+                    if result == 0 {
+                        displayPanel.text = input
+                    } else {
+                        displayPanel.text = "\(Int(result))"
+                    }
                 } else if isDecimal && opSymbol != .count || opSymbol == .div || opSymbol == .mod || opSymbol == .avg {
                     displayPanel.text = "\(result)"
                 } else {
