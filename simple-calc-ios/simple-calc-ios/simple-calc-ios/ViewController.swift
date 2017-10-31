@@ -16,6 +16,9 @@ class ViewController: UIViewController {
     var noOpBefore: Bool = true
     var isDecimal: Bool = false
     var isRPNmode: Bool = false
+    var history: [String] = []
+    var histStr: String = ""
+    var currentDisplay: String = ""
     
     enum allOperators {
         case add
@@ -29,6 +32,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        displayPanel.text = currentDisplay
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -43,11 +47,22 @@ class ViewController: UIViewController {
             noOpBefore = true
         }
         input += sender.currentTitle!
+        addToHistory(input: sender.currentTitle!)
         displayPanel.text = input
     }
     
+    func addToHistory(input: String) {
+        if isRPNmode && histStr == "" {
+            histStr = "RPN mode: "
+        }
+        histStr += input
+        NSLog(histStr)
+    }
+    
     @IBAction func operatorInput(_ sender: UIButton) {
+        addToHistory(input: " " + sender.currentTitle! + " ")
         noOpBefore = false
+        NSLog(input)
         operands.append(Double(input)!)
         if !isRPNmode {
             input = sender.currentTitle!
@@ -65,9 +80,11 @@ class ViewController: UIViewController {
                     input = "Can't calculate the factorial of float"
                 } else {
                     if operands[0] < 0 {
-                        displayPanel.text = "Input should be non-negative."
+                        input = "Input should be non-negative."
+                        displayPanel.text = input
                     } else if operands[0] == 0 {
-                        displayPanel.text = "1"
+                        input = "1"
+                        displayPanel.text = input
                     } else {
                         for var i in 1...Int(operands[0]) {
                             fact = fact * i
@@ -78,10 +95,14 @@ class ViewController: UIViewController {
                 }
                 operands = []
                 isDecimal = false;
+                addToHistory(input: "= \(input)")
+                history.append(histStr)
+                histStr = ""
             default: NSLog("unknown operator")
             }
             displayPanel.text = input
         } else {
+            addToHistory(input: "= ")
             if operands.count > 1 || sender.currentTitle! == "Fact" || sender.currentTitle! == "Avg" || sender.currentTitle! == "Count" {
                 var result: Double = 0
                 switch sender.currentTitle! {
@@ -128,17 +149,25 @@ class ViewController: UIViewController {
                 if sender.currentTitle! == "Fact" {
                     if result == 0 {
                         displayPanel.text = input
+                        addToHistory(input: input)
                     } else {
                         displayPanel.text = "\(Int(result))"
+                        addToHistory(input: "\(Int(result))")
                     }
                 } else if isDecimal && opSymbol != .count || opSymbol == .div || opSymbol == .mod || opSymbol == .avg {
                     displayPanel.text = "\(result)"
+                    addToHistory(input: "\(result)")
                 } else {
                     displayPanel.text = "\(Int(result))"
+                    addToHistory(input: "\(Int(result))")
                 }
+            } else {
+                addToHistory(input: " \(input)")
             }
             operands = []
             isDecimal = false
+            history.append(histStr)
+            histStr = ""
         }
     }
 
@@ -148,6 +177,8 @@ class ViewController: UIViewController {
             operands.append(Double(input)!)
         }
         if !isRPNmode {
+            histStr = histStr.trimmingCharacters(in: .whitespaces)
+            addToHistory(input: " = ")
             var result: Double = 0
             if operands.count > 1 || opSymbol == .count || opSymbol == .avg {
                 switch opSymbol! {
@@ -166,12 +197,21 @@ class ViewController: UIViewController {
                 }
                 if isDecimal && opSymbol != .count || opSymbol == .div || opSymbol == .mod || opSymbol == .avg {
                     displayPanel.text = "\(result)"
+                    addToHistory(input: "\(result)")
                 } else {
                     displayPanel.text = "\(Int(result))"
+                    addToHistory(input: "\(Int(result))")
                 }
+                
+            } else {
+                addToHistory(input: "\(input)")
             }
             operands = []
             isDecimal = false
+            history.append(histStr)
+            histStr = ""
+        } else {
+            addToHistory(input: " ")
         }
     }
     
@@ -182,11 +222,31 @@ class ViewController: UIViewController {
     
     @IBAction func decimalIndicator(_ sender: UIButton) {
         input += sender.currentTitle!
+        addToHistory(input: ".")
         displayPanel.text = input
         isDecimal = true
     }
     
     @IBAction func changeRPNmode(_ sender: UISwitch) {
         isRPNmode = sender.isOn
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier! {
+        case "HistSegue":
+            let source = segue.source as! ViewController
+            let destination = segue.destination as! HistoryViewController
+            destination.history = source.history
+            destination.histStr = source.histStr
+            destination.opSymbol = source.opSymbol
+            destination.input = source.input
+            destination.operands = source.operands
+            destination.noOpBefore = source.noOpBefore
+            destination.isDecimal = source.isDecimal
+            destination.isRPNmode = source.isRPNmode
+            destination.currentDisplay = source.displayPanel.text!
+            
+        default: NSLog("Unkown segue identifier -- " + segue.identifier!)
+        }
     }
 }
