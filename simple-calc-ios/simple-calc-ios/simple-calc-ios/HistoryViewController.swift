@@ -31,7 +31,7 @@ class HistoryViewController: UIViewController {
         var index = 0
         for num in size..<history.count {
             index += 1
-            let label = UILabel(frame: CGRect(x: 30, y: index * 45, width: 300, height: 50))
+            let label = UILabel(frame: CGRect(x: 30, y: index * 45, width: 350, height: 50))
             label.textColor = UIColor.white
             label.text = history[num]
             self.scrollView.addSubview(label)
