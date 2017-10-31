@@ -9,6 +9,7 @@
 import UIKit
 
 class ViewController: UIViewController {
+    @IBOutlet weak var switchButton: UISwitch!
     @IBOutlet weak var displayPanel: UITextField!
     var input: String = ""
     var opSymbol: allOperators? = nil
@@ -41,6 +42,15 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if isRPNmode {
+            switchButton.setOn(true, animated: false)
+        } else {
+            switchButton.setOn(false, animated: false)
+        }
+    }
     @IBAction func numberInput(_ sender: UIButton) {
         if !noOpBefore {
             input = ""
@@ -216,6 +226,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func cleanThePanel(_ sender: UIButton) {
+        let len = input.count
+        let end = histStr.index(histStr.endIndex, offsetBy: -len)
+        let start = histStr.index(histStr.startIndex, offsetBy: 0)
+        histStr = String(histStr[start..<end])
         input = ""
         displayPanel.text = ""
     }

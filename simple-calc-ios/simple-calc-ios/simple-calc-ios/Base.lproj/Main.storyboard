@@ -359,6 +359,7 @@
                     </view>
                     <connections>
                         <outlet property="displayPanel" destination="PxT-hr-or6" id="na6-3y-24o"/>
+                        <outlet property="switchButton" destination="1ec-v0-04Y" id="Mxu-cp-zLd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
