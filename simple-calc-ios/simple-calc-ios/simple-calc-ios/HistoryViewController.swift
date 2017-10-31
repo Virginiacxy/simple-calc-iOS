@@ -11,7 +11,6 @@ import UIKit
 class HistoryViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     var history: [String] = []
-//    var histStr: String = ""
     var size = 0
     var input: String = ""
     var opSymbol: ViewController.allOperators? = nil
@@ -25,17 +24,20 @@ class HistoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.backgroundColor = UIColor.black
-        for _ in history {
-            let label = UILabel(frame: CGRect(x: 30, y: (size + 1) * 45, width: 300, height: 50))
-            label.textColor = UIColor.white
-            label.text = history[size]
-            
-            self.scrollView.addSubview(label)
-            
-            size += 1
+        scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: 945)
+        if history.count > 20 {
+            size = history.count - 20
         }
-            
+        var index = 0
+        for num in size..<history.count {
+            index += 1
+            let label = UILabel(frame: CGRect(x: 30, y: index * 45, width: 300, height: 50))
+            label.textColor = UIColor.white
+            label.text = history[num]
+            self.scrollView.addSubview(label)
+        }
     }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
